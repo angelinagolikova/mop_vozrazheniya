@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf4ff;min-height:100vh;padding:20px 16px 48px;color:#1a1a1a}
+.wrap{max-width:720px;margin:0 auto}
+
+.header{text-align:center;margin-bottom:24px}
+.badge{display:inline-block;background:linear-gradient(135deg,#fdf4ff,#fce7f3);color:#a21caf;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:10px}
+h1{font-size:22px;font-weight:800;color:#1a1a1a;margin-bottom:4px}
+.subtitle{font-size:13px;color:#888}
+
+/* ФИЛЬТРЫ */
+.filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filt{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid #fae8ff;background:white;font-size:12px;font-weight:700;cursor:pointer;color:#aaa;transition:all .15s;white-space:nowrap}
+.filt.active{background:linear-gradient(135deg,#d946ef,#f472b6);color:white;border-color:transparent}
+
+/* ПРИНЦИП */
+.principle{background:white;border-radius:14px;border:1.5px solid #d946ef;padding:16px;margin-bottom:16px;box-shadow:0 2px 14px rgba(217,70,239,0.1)}
+.principle-title{font-size:12px;font-weight:800;color:#a21caf;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.principle-row{display:flex;gap:8px;font-size:13px;color:#555;line-height:1.6;margin-bottom:6px}
+.principle-row:last-child{margin-bottom:0}
+.principle-row::before{content:"→";color:#d946ef;flex-shrink:0;margin-top:2px}
+
+/* КАРТОЧКИ ВОЗРАЖЕНИЙ */
+.obj-card{background:white;border-radius:14px;border:1px solid #fae8ff;box-shadow:0 2px 10px rgba(180,0,180,0.05);margin-bottom:10px;overflow:hidden}
+.obj-card[data-group="price"] .obj-tag{background:#fce7f3;color:#a21caf}
+.obj-card[data-group="time"] .obj-tag{background:#e0f2fe;color:#0369a1}
+.obj-card[data-group="trust"] .obj-tag{background:#dcfce7;color:#15803d}
+.obj-card[data-group="delay"] .obj-tag{background:#fef9c3;color:#a16207}
+.obj-card[data-group="other"] .obj-tag{background:#f3e8ff;color:#7e22ce}
+
+.obj-head{display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer;transition:background .15s}
+.obj-head:hover{background:#fdf4ff}
+.obj-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#d946ef,#f472b6);color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.obj-meta{flex:1}
+.obj-title{font-size:14px;font-weight:800;color:#1a1a1a}
+.obj-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;display:inline-block;margin-top:3px;letter-spacing:.3px}
+.obj-arrow{color:#d946ef;font-size:13px;transition:transform .2s;flex-shrink:0}
+.obj-arrow.open{transform:rotate(180deg)}
+
+.obj-body{display:none;padding:0 16px 16px}
+.obj-body.open{display:block}
+
+/* ИСТИННОЕ / ЛОЖНОЕ */
+.type-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.type-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px}
+.type-badge.false{background:#fef9c3;color:#a16207}
+.type-badge.true{background:#dcfce7;color:#15803d}
+.type-badge.both{background:#f3e8ff;color:#7e22ce}
+
+/* СКРИПТЫ */
+.scripts-label{font-size:10px;font-weight:800;color:#a21caf;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;margin-top:4px}
+.script-item{background:#fdf4ff;border-left:3px solid #d946ef;border-radius:0 8px 8px 0;padding:11px 14px;font-size:13px;color:#333;line-height:1.75;margin-bottom:8px;font-style:italic;white-space:pre-wrap}
+.script-item:last-child{margin-bottom:0}
+
+/* ПОДСКАЗКА */
+.hint{background:linear-gradient(135deg,#fdf4ff,#fce7f3);border-radius:8px;padding:10px 12px;font-size:12px;color:#555;line-height:1.6;margin-top:10px}
+.hint strong{color:#a21caf}
+
+/* HIDDEN */
+.obj-card.hidden{display:none}
+
+.counter{font-size:11px;color:#aaa;text-align:center;margin-bottom:12px}
+.counter strong{color:#a21caf}
+
+.footer{text-align:center;font-size:11px;color:#ccc;margin-top:24px}
+.footer strong{color:#d946ef}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="header">
+  <div class="badge">Доп. материал к курсу</div>
+  <h1>14 основных возражений</h1>
+  <p class="subtitle">Скрипты для переписки и созвонов · выбирай ситуацию и применяй</p>
+</div>
+
+<div class="principle">
+  <div class="principle-title">⚡ Схема работы с любым возражением</div>
+  <div class="principle-row"><strong>1. Присоединение</strong> — встань на сторону клиента, не спорь</div>
+  <div class="principle-row"><strong>2. Уточнение</strong> — найди настоящую причину («что именно смущает?»)</div>
+  <div class="principle-row"><strong>3. Аргумент</strong> — конкретно под то, что услышал</div>
+  <div class="principle-row"><strong>4. Следующий шаг</strong> — предложи действие, не жди</div>
+  <div class="principle-row">Большинство возражений — <strong>ложные</strong>. За «дорого» чаще всего стоит «не донесена ценность». За «подумаю» — скрытое сомнение. Твоя задача — найти настоящее.</div>
+</div>
+
+<div class="filters">
+  <button class="filt active" onclick="filterCards('all')">Все (14)</button>
+  <button class="filt" onclick="filterCards('price')">💰 Цена</button>
+  <button class="filt" onclick="filterCards('delay')">⏳ Откладывает</button>
+  <button class="filt" onclick="filterCards('trust')">🤝 Доверие</button>
+  <button class="filt" onclick="filterCards('time')">⏰ Время</button>
+  <button class="filt" onclick="filterCards('other')">📌 Другое</button>
+</div>
+
+<div class="counter" id="counter">Показано <strong>14</strong> возражений</div>
+
+<div id="cards">
+
+<!-- 1 -->
+<div class="obj-card" data-group="price">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">1</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Дорого»</div>
+      <span class="obj-tag">💰 Цена</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge false">Чаще ложное</span></div>
+    <div class="hint">«Дорого» — понятие относительное. Человек, который говорит «дорого» за 30 000, может пойти и купить за 150 000 у другого. Потому что тот донёс ценность. Не снижай цену — сначала разберись в причине.</div>
+    <div class="scripts-label" style="margin-top:12px">Скрипты</div>
+    <div class="script-item">«Понимаю — важно принимать взвешенные решения. Скажи, что именно смущает: сама сумма — или пока не видишь, как это окупится?»</div>
+    <div class="script-item">«Давай посчитаем по-другому. [Продукт] стоит [цена]. Если разбить на [срок] — это [сумма в день]. Меньше, чем [сравнение]. А результат остаётся с тобой.»</div>
+    <div class="script-item">«Слушай, давай честно: когда говорят "дорого", это обычно одно из двух — реально сейчас нет денег, или не видишь ценности. Скажи прямо — что у тебя? Без обид, просто хочу понять, как помочь.»</div>
+    <div class="scripts-label">Если вопрос формата оплаты</div>
+    <div class="script-item">«Есть рассрочка на [срок] — тогда выходит [сумма в месяц]. Для многих это меняет всё. Как тебе?»</div>
+  </div>
+</div>
+
+<!-- 2 -->
+<div class="obj-card" data-group="price">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">2</div>
+    <div class="obj-meta">
+      <div class="obj-title">«У конкурентов дешевле»</div>
+      <span class="obj-tag">💰 Цена</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge false">Чаще ложное</span></div>
+    <div class="hint">Не спорь и не обесценивай других. Переводи разговор с цены на результат.</div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Да, есть варианты дешевле — я знаю 😊 Скажи, что для тебя важнее: низкая цена или результат? Если второе — давай расскажу, за что именно здесь такая цена.»</div>
+    <div class="script-item">«Интересно! А что конкретно входит в их предложение? Давай сравним — иногда разница в цене = разница в составе услуги.»</div>
+    <div class="script-item">«Понимаю желание сэкономить. Бывает так: берут дешевле, потом делают дороже — потому что результат не тот. Мои клиенты приходят в том числе от других специалистов именно поэтому.»</div>
+  </div>
+</div>
+
+<!-- 3 -->
+<div class="obj-card" data-group="price">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">3</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Нет денег»</div>
+      <span class="obj-tag">💰 Цена</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge both">Может быть и истинным</span></div>
+    <div class="hint">Если это истинное возражение — предложи варианты. Если ложное — донеси ценность. Никогда не обесценивай ситуацию человека.</div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Слышу тебя. Именно поэтому важно инвестировать деньги туда, где точно будет результат. Есть рассрочка — можем разбить на части, чтобы было комфортно. Хочешь, расскажу?»</div>
+    <div class="script-item">«Понимаю. А скажи — когда ситуация изменится, это станет актуально? Давай я напишу тебе через месяц, просто спрошу как дела?»</div>
+    <div class="script-item">«Знаешь, деньги всегда находятся на то, что человек считает важным. Не давлю — но скажи честно: дело в деньгах или есть ещё что-то, что останавливает?»</div>
+  </div>
+</div>
+
+<!-- 4 -->
+<div class="obj-card" data-group="delay">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">4</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Я подумаю»</div>
+      <span class="obj-tag">⏳ Откладывает</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge false">Почти всегда ложное</span></div>
+    <div class="hint">За «подумаю» почти всегда стоит что-то конкретное — страх, сомнение в результате, деньги, кто-то ещё. Задача — найти настоящее, не давя. Люди говорят «подумаю», потому что знают: если скажут правду — начнут переубеждать. Покажи, что ты не такой.</div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Конечно, решение важное. Слушай, скажу честно — когда говорят "подумаю", за этим почти всегда стоит что-то конкретное, просто неловко говорить напрямую. Я не давлю — я на твоей стороне. Просто скажи честно: что не так? Мне это важно даже просто как обратная связь.»</div>
+    <div class="script-item">«Хорошо! Сколько времени нужно? Просто хочу понять — ты планируешь вернуться к этому вопросу или для тебя он уже закрыт?»</div>
+    <div class="script-item">«Обычно "подумаю" — это одно из трёх: нужно посоветоваться, не хватает денег или есть сомнение в результате. Что из этого ближе к твоей ситуации?»</div>
+  </div>
+</div>
+
+<!-- 5 -->
+<div class="obj-card" data-group="delay">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">5</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Не сейчас / сейчас не актуально»</div>
+      <span class="obj-tag">⏳ Откладывает</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge both">Может быть истинным</span></div>
+    <div class="hint">«Не сейчас» — не «нет навсегда». Ситуации меняются. Уходи красиво — и напиши через месяц. Именно так работает долгосрочная база.</div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Понял. А когда примерно станет актуально — через месяц, два? Давай я просто напишу тебе тогда, не буду беспокоить раньше. Хорошо?»</div>
+    <div class="script-item">«Хорошо! А можно уточнить — почему сейчас не время? Просто хочу понять, чтобы не беспокоить в неподходящий момент.»</div>
+    <div class="script-item">«Окей, [Имя]. Тогда я запишу тебя в базу и напишу через месяц — просто спрошу как дела. Если что поменяется раньше — пиши, я здесь 😊»</div>
+    <div class="hint" style="margin-top:10px">После «не сейчас» — человек уходит в базу с пометкой когда написать. Пока он не сказал «никогда больше не пиши» — он не закрыт.</div>
+  </div>
+</div>
+
+<!-- 6 -->
+<div class="obj-card" data-group="delay">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">6</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Нужно посоветоваться»</div>
+      <span class="obj-tag">⏳ Откладывает</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge both">Может быть и истинным</span></div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Конечно! С кем планируешь посоветоваться?»
+[Если с партнёром/мужем/близким]:
+«Может, созвонимся втроём? Я отвечу на все вопросы сразу — тебе не придётся пересказывать. Когда вам обоим удобно?»</div>
+    <div class="script-item">«Помочь с аргументами? Могу отправить детали, которые можно показать — примеры результатов, отзывы, план работы. Так будет проще обсудить!»</div>
+    <div class="script-item">«А скажи — если партнёр скажет "решай сам" — ты бы принял решение? Или есть ещё что-то, что останавливает?»</div>
+  </div>
+</div>
+
+<!-- 7 -->
+<div class="obj-card" data-group="time">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">7</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Нет времени»</div>
+      <span class="obj-tag">⏰ Время</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge both">Может быть и истинным</span></div>
+    <div class="hint">Различай: человек реально занят — или ищет отговорку. Если реально занят — предложи минимальное участие или отложенный старт.</div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Как раз поэтому и предлагаю 😊 Сколько времени ты сейчас тратишь на [задачу]? После нашей работы это уйдёт — или сократится до минимума. Берём всё на себя.»</div>
+    <div class="script-item">«От тебя нужно минимум: [действие 1] — 10 минут, [действие 2] — раз в неделю. Всё остальное я беру на себя. Попробуем?»</div>
+    <div class="script-item">«Понял тебя. Когда появится время — через неделю, месяц? Могу записать тебя на [дата] — к тому времени освободишься, и начнём спокойно.»</div>
+  </div>
+</div>
+
+<!-- 8 -->
+<div class="obj-card" data-group="trust">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">8</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Не уверен, что получится / у меня особый случай»</div>
+      <span class="obj-tag">🤝 Доверие</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge true">Истинное — работай мягко</span></div>
+    <div class="hint">Это страх, а не отказ. Задача — снизить риск и показать похожую историю. Не переубеждай словами — покажи доказательствами.</div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Это нормально — сомневаться перед важным решением. Расскажи, что конкретно пугает? [Слушаешь.]
+
+Вот история человека с очень похожей ситуацией: [конкретный кейс]. Что думаешь?»</div>
+    <div class="script-item">«Смотри, есть два пути. Первый — остаться там, где ты сейчас. Через полгода — та же точка. Второй — попробовать с поддержкой и чёткой системой. Да, будет некомфортно поначалу. Но ты двигаешься. Что выбираешь?»</div>
+    <div class="script-item">«У меня есть гарантия [какая]. Если не получится — [условие]. Риска нет, а возможность есть. Как тебе?»</div>
+  </div>
+</div>
+
+<!-- 9 -->
+<div class="obj-card" data-group="trust">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">9</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Был плохой опыт / уже пробовал — не помогло»</div>
+      <span class="obj-tag">🤝 Доверие</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge true">Истинное — не обесценивай</span></div>
+    <div class="hint">Никогда не говори «ну у нас-то по-другому» сразу. Сначала признай боль, потом объясни разницу.</div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Понимаю — и это реально обидно, когда вкладываешь и не получаешь результат. Расскажи, что именно не сработало? Хочу понять, чтобы не повторить ту же ошибку.»</div>
+    <div class="script-item">«Именно поэтому ты здесь — потому что уже знаешь, как бывает, когда идёшь не туда. Значит умеешь анализировать и делать выводы. Давай разберём, чем этот вариант отличается от того, что было раньше.»</div>
+    <div class="script-item">«Могу дать контакты реальных клиентов — можешь написать им напрямую, без фильтра с моей стороны. Так честнее, согласен?»</div>
+  </div>
+</div>
+
+<!-- 10 -->
+<div class="obj-card" data-group="trust">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">10</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Плохие отзывы / сомневаюсь в вас»</div>
+      <span class="obj-tag">🤝 Доверие</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge true">Истинное — не защищайся</span></div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Спасибо, что подняла этот вопрос! Какой конкретно отзыв смутил? Дай посмотрю — хочу разобраться.
+
+Да, бывают недовольные клиенты — это нормально. Важно соотношение. Могу показать статистику и дать контакты тех, кто готов поговорить напрямую.»</div>
+    <div class="script-item">«Понимаю сомнения. Предлагаю начать с [небольшой шаг / тест] — так ты убедишься сама, без риска. Если не понравится — всегда можно остановиться.»</div>
+  </div>
+</div>
+
+<!-- 11 -->
+<div class="obj-card" data-group="other">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">11</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Уже работаю со специалистом / уже купил у другого»</div>
+      <span class="obj-tag">📌 Другое</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge true">Истинное</span></div>
+    <div class="hint">Не давить и не обесценивать чужую работу. Уходишь с добром — и человек это запомнит. Многие возвращаются именно после таких разговоров.</div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Здорово! Значит, тема тебе актуальна и ты уже предпринял шаги — это важно 😊
+
+Расскажи — как всё идёт? Получаешь то, чего ожидал?»</div>
+    <div class="script-item">[Если есть сомнения]:
+«Понимаю. Знаешь, бывает, что подход у одного специалиста не совпадает с тем, что нужно именно тебе. Я не предлагаю бросить то, что начал. Но если захочешь сравнить подходы — напиши, я здесь.»</div>
+    <div class="script-item">[Если всё хорошо]:
+«Отлично! Очень рада за тебя. Желаю классных результатов — обучайся, делай всё что говорят, выкладывайся. Если вдруг понадобится — я здесь 😊»</div>
+  </div>
+</div>
+
+<!-- 12 -->
+<div class="obj-card" data-group="other">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">12</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Пришлите информацию / скиньте на почту»</div>
+      <span class="obj-tag">📌 Другое</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge false">Чаще ложное — способ уйти</span></div>
+    <div class="hint">Не отправляй прайс без контекста — его никто не читает. Сначала задай пару вопросов, потом отправь точечную информацию.</div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Конечно отправлю! Чтобы не засыпать тебя лишним — скажи коротко: что сейчас важнее всего? Тогда пришлю именно то, что нужно, а не всё подряд 😊»</div>
+    <div class="script-item">«Отправить могу — но честно, общую информацию обычно не читают 😅 Давай я за 2 минуты расскажу самое главное прямо здесь — и ты сам поймёшь, нужно ли тебе это. Хорошо?»</div>
+    <div class="script-item">«Скажи — ты сейчас удобно можешь говорить пару минут? Или лучше напишу текстом?»</div>
+  </div>
+</div>
+
+<!-- 13 -->
+<div class="obj-card" data-group="other">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">13</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Я сам справлюсь»</div>
+      <span class="obj-tag">📌 Другое</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge false">Чаще ложное</span></div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Верю! Ты явно разбираешься. А скажи — сколько времени уже пытаешься разобраться самостоятельно? И где именно застрял?»</div>
+    <div class="script-item">«Конечно можно справиться самому. Вопрос в скорости и цене ошибок. Я прошла этот путь — и могу помочь тебе пропустить те грабли, на которые наступила сама. Это сэкономит тебе [время/деньги]. Интересно?»</div>
+    <div class="script-item">«Окей! Тогда давай так: вот один конкретный совет по твоей ситуации бесплатно — [совет]. Попробуй. Если захочешь ускориться — пиши, помогу 😊»</div>
+  </div>
+</div>
+
+<!-- 14 -->
+<div class="obj-card" data-group="other">
+  <div class="obj-head" onclick="toggle(this)">
+    <div class="obj-num">14</div>
+    <div class="obj-meta">
+      <div class="obj-title">«Посмотрю другие варианты»</div>
+      <span class="obj-tag">📌 Другое</span>
+    </div>
+    <div class="obj-arrow">▾</div>
+  </div>
+  <div class="obj-body">
+    <div class="type-row"><span class="type-badge false">Чаще ложное</span></div>
+    <div class="hint">Не спорь и не обесценивай других. Убедись, что человек сравнивает по результату, а не только по цене.</div>
+    <div class="scripts-label">Скрипты</div>
+    <div class="script-item">«Конечно, посмотри! Главное — сравнивай не по цене, а по тому, какой результат получишь. Что для тебя самое важное при выборе?»</div>
+    <div class="script-item">«Хорошо. Скажи — что должно быть в предложении, чтобы ты выбрал без сомнений? Давай проверим, есть ли это у меня.»</div>
+    <div class="script-item">«Окей! Напиши, когда посмотришь — расскажу, чем отличаемся, если будет интересно. Без давления 😊»</div>
+  </div>
+</div>
+
+</div><!-- /cards -->
+
+<div class="footer">Доп. материал к курсу <strong>«Профессия: продажи»</strong> · Ангелина Голикова</div>
+</div>
+
+<script>
+function toggle(head){
+  const body=head.nextElementSibling;
+  const arrow=head.querySelector('.obj-arrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+function filterCards(group){
+  document.querySelectorAll('.filt').forEach(f=>f.classList.remove('active'));
+  event.target.classList.add('active');
+  const cards=document.querySelectorAll('.obj-card');
+  let shown=0;
+  cards.forEach(c=>{
+    const match=group==='all'||c.dataset.group===group;
+    c.classList.toggle('hidden',!match);
+    if(match)shown++;
+  });
+  document.getElementById('counter').innerHTML=`Показано <strong>${shown}</strong> возражени${shown===1?'е':shown<5?'я':'й'}`;
+}
+</script>
+</body>
+</html>
